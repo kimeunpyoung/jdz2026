@@ -90,9 +90,10 @@ def pile(c, x0, x1, floor, peak, sizes, d, seed):
     return len(placed)
 
 
-def square_stack(c, xc, floor, d, gap=5):
+def square_stack(c, xc, floor, d, gap=0):
     """정사각/직사각 각파이프만 층층이 쌓은 더미. rows = (가로, 세로, 개수)."""
-    rows = [(150, 150, 6), (200, 100, 4), (130, 130, 5), (100, 100, 5), (150, 75, 2)]
+    # 모든 줄의 세로 이음선이 150mm 격자에 맞도록 크기를 정한다
+    rows = [(150, 150, 6), (300, 100, 2), (150, 150, 4), (150, 150, 2)]
     items, y = [], floor
     for w, h, n in rows:
         x = xc - (n * w + (n - 1) * gap) / 2

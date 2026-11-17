@@ -180,7 +180,7 @@ def square_body(c, cx, cy, a, b, d):
     grad(c, poly(c, top), (x0, y1), (x0 + dx * 0.6, y1 + dy * 0.6), TOP_FACE)
     grad(c, poly(c, side), (xs, y0), (xs + dx * 0.6, y0 + dy * 0.6), SIDE_FACE)
     m = min(a, b)
-    c.setLineJoin(0)
+    c.setLineJoin(2)  # 뾰족한 모서리에서 선이 삐져나오지 않게 베벨 처리
     c.setLineCap(0)
     c.setStrokeColor(STEEL_LINE)
     c.setLineWidth(m * 0.035)
