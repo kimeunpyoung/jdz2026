@@ -90,6 +90,23 @@ def pile(c, x0, x1, floor, peak, sizes, d, seed):
     return len(placed)
 
 
+def square_stack(c, xc, floor, d, gap=5):
+    """정사각/직사각 각파이프만 층층이 쌓은 더미. rows = (가로, 세로, 개수)."""
+    rows = [(150, 150, 6), (200, 100, 4), (130, 130, 5), (100, 100, 5), (150, 75, 2)]
+    items, y = [], floor
+    for w, h, n in rows:
+        x = xc - (n * w + (n - 1) * gap) / 2
+        for i in range(n):
+            items.append((x + i * (w + gap) + w / 2, y + h / 2, w / 2, h / 2))
+        y += h + gap
+    L = math.hypot(*d)
+    items.sort(key=lambda q: (q[0] * d[0] + q[1] * d[1]) / L)
+    for cx, cy, a, b in items:
+        M.square_body(c, cx, cy, a, b, d)
+    for cx, cy, a, b in items:
+        M.square_face(c, cx, cy, a, b, min(a, b) * 0.16)
+
+
 def bg(c, W, H):
     c.saveState()
     c.linearGradient(0, H, 0, 0, [BG_TOP, BG_BOT], extend=True)
@@ -131,7 +148,7 @@ def front_big_b(c, W, H):
 
 
 # ---- 전면간판 작은 것 3000 x 1000 (B안) ------------------------------------
-def front_small_b(c, W, H):
+def front_small_b(c, W, H, square_only=False):
     bg(c, W, H)
     for xb, w in ((-600, 380), (300, 150), (900, 420)):
         band(c, xb, w, BAND_DIM)
@@ -142,8 +159,11 @@ def front_small_b(c, W, H):
     band(c, 2430, 130, BAND_STEEL, 200, 1000)
     band(c, 2600, 380, BAND_METAL)
 
-    n = pile(c, 2030, 2930, 45, 640, [118, 104, 90, 76, 64, 53, 43, 34, 26], (1100, 230), seed=12)
-    print("pipes:", n)
+    if square_only:
+        square_stack(c, 2480, 45, (1100, 230))
+    else:
+        n = pile(c, 2030, 2930, 45, 640, [118, 104, 90, 76, 64, 53, 43, 34, 26], (1100, 230), seed=12)
+        print("pipes:", n)
 
     x, w = 130, 1790
     text(c, HAN, "절단가공 전문", (x, 655, w, 245), M.YELLOW, anchor="l", shadow=7, max_h=245)
@@ -184,3 +204,4 @@ def protruding_b(c, W, H):
 M.make("B안_1_전면간판_큰것", 6000, 1000, front_big_b)
 M.make("B안_2_전면간판_작은것", 3000, 1000, front_small_b)
 M.make("B안_3_돌출간판", 800, 2000, protruding_b)
+M.make("B안_2b_전면간판_작은것_각파이프", 3000, 1000, lambda c, W, H: front_small_b(c, W, H, True))
