@@ -320,6 +320,7 @@ def protruding(c, W, H):
         text(c, GOT, num, (205, y, W - 265, 72), WHITE, anchor="r", max_h=72)
 
 
-make("1_전면간판_큰것", 6000, 1000, front_big)
-make("2_전면간판_작은것", 3000, 1000, front_small)
-make("3_돌출간판", 800, 2000, protruding)
+if __name__ == "__main__":
+    make("1_전면간판_큰것", 6000, 1000, front_big)
+    make("2_전면간판_작은것", 3000, 1000, front_small)
+    make("3_돌출간판", 800, 2000, protruding)
