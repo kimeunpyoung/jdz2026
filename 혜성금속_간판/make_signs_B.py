@@ -99,31 +99,35 @@ def bg(c, W, H):
 # ---- 전면간판 큰 것 6000 x 1000 (B안) -------------------------------------
 def front_big_b(c, W, H):
     bg(c, W, H)
-    for xb, w in ((-700, 420), (350, 180), (1500, 520), (2550, 140)):   # 글자 뒤 은은한 띠
+    for xb, w in ((-700, 420), (350, 180), (1500, 520)):   # 글자 뒤 은은한 띠
         band(c, xb, w, BAND_DIM)
-    band(c, 3180, 330, BAND_NAVY)
-    band(c, 3560, 90, BAND_STEEL, 0, 620)
-    band(c, 3700, 260, BAND_METAL)
-    band(c, 4020, 60, BAND_STEEL, 300, 1000)
-    band(c, 4150, 420, BAND_NAVY)
-    band(c, 4620, 200, BAND_METAL, 150, 1000)
-    band(c, 4900, 110, BAND_STEEL)
-    band(c, 5100, 520, BAND_METAL)
-    band(c, 5700, 300, BAND_NAVY)
+    # 오른쪽 절반: 참고 이미지처럼 굵고 가는 메탈 띠가 겹쳐 올라간다
+    band(c, 2500, 300, BAND_NAVY)
+    band(c, 3330, 50, BAND_STEEL, 0, 430)
+    band(c, 3430, 330, BAND_METAL)
+    band(c, 3800, 50, BAND_STEEL, 380, 1000)
+    band(c, 3560, 460, BAND_NAVY)
+    band(c, 4080, 240, BAND_METAL, 120, 1000)
+    band(c, 4380, 110, BAND_STEEL)
+    band(c, 4560, 620, BAND_METAL)
+    band(c, 5250, 380, BAND_NAVY)
+    band(c, 5700, 500, BAND_METAL)
 
-    n = pile(c, 4330, 5780, 45, 800, [150, 135, 120, 105, 90, 78, 66, 55, 45, 36, 28], (1700, 300), seed=7)
+    # 크고 작은 원형/각 파이프를 높게 쌓은 더미, 몸통은 오른쪽 바깥으로 길게 뻗는다
+    n = pile(c, 3900, 5650, 40, 900,
+             [165, 150, 135, 120, 105, 92, 80, 68, 57, 47, 38, 30, 23], (2300, 330), seed=21)
     print("pipes:", n)
 
-    x0, x1 = 230, 3930
+    x0, x1 = 200, 3700
     cell = (x1 - x0) / 4
     for i, ch in enumerate("혜성금속"):
         text_grad(c, HAN, ch, (x0 + cell * i, 330, cell, 580), SILVER, shadow=12)
     c.setFillColor(M.YELLOW)
-    c.rect(x0 + 60, 262, x1 - x0 - 330, 9, stroke=0, fill=1)
+    c.rect(x0 + 50, 262, 3100, 9, stroke=0, fill=1)
     y, h = 62, 150
-    left = text(c, GOT, "절단가공", (x0 + 60, y, 700, h), M.YELLOW, anchor="l", max_h=140)
-    fax = text(c, GOT, "FAX. 02-953-2122", (x1 - 1620, y, 1200, h), M.WHITE, anchor="r", max_h=118)
-    text(c, GOT, "TEL. 02-953-2110", (left[2], y, fax[0] - left[2], h), M.WHITE, max_h=118)
+    left = text(c, GOT, "절단가공", (x0 + 50, y, 700, h), M.YELLOW, anchor="l", max_h=125)
+    fax = text(c, GOT, "FAX. 02-953-2122", (x0 + 50 + 3100 - 1300, y, 1300, h), M.WHITE, anchor="r", max_h=105)
+    text(c, GOT, "TEL. 02-953-2110", (left[2], y, fax[0] - left[2], h), M.WHITE, max_h=105)
 
 
 # ---- 전면간판 작은 것 3000 x 1000 (B안) ------------------------------------
@@ -149,5 +153,34 @@ def front_small_b(c, W, H):
     text(c, GOT, "앵글 / 평철 / 환봉 / 각종부속", (x, 130, w, 150), M.WHITE, anchor="l", max_h=150)
 
 
+# ---- 돌출간판 800 x 2000 (B안) --------------------------------------------
+def protruding_b(c, W, H):
+    bg(c, W, H)
+    for xb, w in ((-2300, 260), (-1700, 120), (-1150, 330), (-420, 150), (150, 300)):
+        band(c, xb, w, BAND_DIM, 0, H)
+    # 글자를 가리지 않도록 양옆 가장자리에만 짧은 메탈 띠, 연락처 위에는 가로지르는 띠
+    band(c, -1689, 140, BAND_METAL, 1780, H)
+    band(c, -1830, 40, BAND_STEEL, 1890, H)
+    band(c, -818, 90, BAND_METAL, 1100, 1264)
+    band(c, -1851, 140, BAND_METAL, 1336, 1500)
+    band(c, -894, 80, BAND_STEEL, 636, 800)
+    band(c, -480, 300, BAND_NAVY, 395, 540)
+    band(c, -250, 60, BAND_STEEL, 395, 540)
+    band(c, -80, 130, BAND_METAL, 395, 540)
+    band(c, 120, 40, BAND_STEEL, 395, 540)
+
+    top, bottom = H - 80, 560
+    cell = (top - bottom) / 4
+    for i, ch in enumerate("혜성금속"):
+        text_grad(c, HAN, ch, (120, top - cell * (i + 1) + 25, W - 240, cell - 50), SILVER, shadow=8)
+    c.setFillColor(M.YELLOW)
+    c.rect(0, 385, W, 10, stroke=0, fill=1)
+    text(c, GOT, "절단가공", (90, 262, W - 180, 88), M.YELLOW, max_h=88)
+    for label, num, y in (("TEL", "02-953-2110", 155), ("FAX", "02-953-2122", 50)):
+        text(c, GOT, label, (60, y, 130, 72), M.YELLOW, anchor="l", max_h=50)
+        text(c, GOT, num, (205, y, W - 265, 72), M.WHITE, anchor="r", max_h=72)
+
+
 M.make("B안_1_전면간판_큰것", 6000, 1000, front_big_b)
 M.make("B안_2_전면간판_작은것", 3000, 1000, front_small_b)
+M.make("B안_3_돌출간판", 800, 2000, protruding_b)
