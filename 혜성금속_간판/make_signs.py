@@ -164,41 +164,47 @@ def round_face(c, cx, cy, r, wall):
     c.circle(cx, cy, ri, stroke=1, fill=0)
 
 
+TOP_FACE = [(0.0, "#f1f4f6"), (0.35, "#d3d9de"), (1.0, "#a3adb6")]
+SIDE_FACE = [(0.0, "#7f8993"), (0.4, "#69737d"), (1.0, "#4c555e")]
+
+
 def square_body(c, cx, cy, a, b, d):
-    """a, b = 가로/세로 반폭. d = 몸통이 뒤로 뻗는 화면상 벡터(dy > 0)."""
+    """a, b = 가로/세로 반폭. d = 몸통이 뒤로 뻗는 화면상 벡터(dy > 0).
+    윗면과 옆면을 각각 평평한 면으로 칠해 꺾인 모서리가 또렷하게 보이게 한다."""
     dx, dy = d
     x0, x1, y0, y1 = cx - a, cx + a, cy - b, cy + b
     top = [(x0, y1), (x1, y1), (x1 + dx, y1 + dy), (x0 + dx, y1 + dy)]
     xs = x1 if dx > 0 else x0
     side = [(xs, y0), (xs, y1), (xs + dx, y1 + dy), (xs + dx, y0 + dy)]
-    L = math.hypot(dx, dy)
-    nx, ny = -dy / L, dx / L
-    if ny < 0:
-        nx, ny = -nx, -ny
-    # 윗면: 밝은 광택 / 옆면: 어두운 광택 (몸통 길이 방향과 직각으로 흐르는 그라데이션)
-    w = abs(2 * a * ny)
-    grad(c, poly(c, top), (x0 if nx > 0 else x1, y1), ((x0 if nx > 0 else x1) + nx * w, y1 + ny * w), METAL)
-    h = abs(2 * b * ny) + 1e-6
-    grad(c, poly(c, side), (xs, y1), (xs, y1 - h * 1.0), METAL_DARK)
+    # 면마다 길이 방향으로만 살짝 어두워지는 평면 톤
+    grad(c, poly(c, top), (x0, y1), (x0 + dx * 0.6, y1 + dy * 0.6), TOP_FACE)
+    grad(c, poly(c, side), (xs, y0), (xs + dx * 0.6, y0 + dy * 0.6), SIDE_FACE)
+    m = min(a, b)
+    c.setLineJoin(0)
+    c.setLineCap(0)
     c.setStrokeColor(STEEL_LINE)
-    c.setLineWidth(min(a, b) * 0.035)
-    c.setLineJoin(1)
+    c.setLineWidth(m * 0.035)
     c.drawPath(poly(c, top), stroke=1, fill=0)
     c.drawPath(poly(c, side), stroke=1, fill=0)
+    # 윗면과 옆면이 만나는 꺾인 모서리: 밝은 선으로 강조
+    c.setStrokeColor(HexColor("#ffffff"))
+    c.setLineWidth(m * 0.03)
+    c.line(xs, y1, xs + dx, y1 + dy)
 
 
 def square_face(c, cx, cy, a, b, wall):
-    rr = min(a, b) * 0.16
-    p = c.beginPath(); p.roundRect(cx - a, cy - b, 2 * a, 2 * b, rr)
+    """단면은 직각 모서리로 그려 몸통 모서리와 정확히 맞춘다."""
+    p = c.beginPath(); p.rect(cx - a, cy - b, 2 * a, 2 * b)
     grad(c, p, (cx - a, cy + b), (cx + a, cy - b), FACE)
     ai, bi = a - wall, b - wall
-    p = c.beginPath(); p.roundRect(cx - ai, cy - bi, 2 * ai, 2 * bi, rr * 0.5)
+    p = c.beginPath(); p.rect(cx - ai, cy - bi, 2 * ai, 2 * bi)
     grad(c, p, (cx - ai, cy + bi), (cx + ai, cy - bi), HOLE)
+    c.setLineJoin(0)
     c.setStrokeColor(STEEL_LINE)
     c.setLineWidth(min(a, b) * 0.035)
-    c.roundRect(cx - a, cy - b, 2 * a, 2 * b, rr, stroke=1, fill=0)
+    c.rect(cx - a, cy - b, 2 * a, 2 * b, stroke=1, fill=0)
     c.setLineWidth(min(a, b) * 0.02)
-    c.roundRect(cx - ai, cy - bi, 2 * ai, 2 * bi, rr * 0.5, stroke=1, fill=0)
+    c.rect(cx - ai, cy - bi, 2 * ai, 2 * bi, stroke=1, fill=0)
 
 
 def bundle(c, pipes, d):
